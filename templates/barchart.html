@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>barchart</title>
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='barchart.css') }}">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    </head>
+
+
+    <body>
+        <div class="nav">
+          <div >
+              <p class="nav-p">Intrusion Detection System</p>
+          </div>
+
+          <div class="nav-li">
+              <li>home</li>
+              <li>traffic</li>
+              <li>dashboard</li>
+              <li>monitor</li>
+          </div>
+
+        </div>
+
+
+        <div class="bar">
+
+            <div class="bar-p">
+                <p>The result of prdiction is {{prediction}}</p>
+
+            </div>
+            
+            
+
+            <div>
+                
+                <canvas id="bar-chart"></canvas>
+            </div>
+
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        <script src="chart.min.js"></script>
+        <script>
+          var prediction_rf = {{ prediction_rf|tojson }};
+            new Chart(document.getElementById('bar-chart'), {
+              type: 'bar',
+              data: {
+                labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE"],
+                datasets: [{
+                  backgroundColor: ["green", "#254BDD",
+                    "#ffbe0b", "#1d3557", "#326998"
+                  ],
+                  data: prediction_rf
+                  
+               
+
+                }]
+              },
+              options: {
+                title: {
+                  display: true,
+                  text: 'Bar Chart for admin panel'
+                },
+                responsive: true
+              }
+            });
+          </script>
+
+
+
+
+
+    </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>
