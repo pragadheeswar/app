@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+
+        <title>form</title>
+
+
+        <link rel="stylesheet" href="form.css"></link>
+
+
+    </head>
+
+
+
+    <body>
+        <div class="nav">
+            <div >
+                <p class="nav-p">Intrusion Detection System</p>
+            </div>
+
+            <div class="nav-li">
+                <li>home</li>
+                <li>traffic</li>
+                <li>dashboard</li>
+                <li>monitor</li>
+            </div>
+
+        </div>
+
+        <div class="container">
+
+
+                <div class="top">
+                    <div>
+                        <p class="top-p">Select the traffic feature</p>
+                    </div>
+                    <div class="buttons">
+                        <button class="button">Normal</button>
+                        <button class="button">DoS</button>
+                        <button class="button">R2L</button>
+                        <button class="button">U2R</button>
+                        <button class="button">Probe</button>
+                    </div>
+
+                </div>
+            
+                <form class="form">
+                    <div class="div-1">
+                        <div class="div-1-a">
+                            <p class="div-p">Duration</p>
+                            <input type="number" class="input" placeholder="Time duration of the connection">
+
+                        </div>
+                        <div class="div-1-b">
+                            <P class="div-p">Protocol Type</P>
+                            <select class="select" name="protocol" id="protocol">
+                                <option value="">Protocol used in this connection</option>
+                                <option value="2">TCP</option>
+                                <option value="1">UDP</option>
+                                <option value="0">ICMP</option>
+                            </select>
+
+                        </div>
+
+                    </div>
+                    <div class="div-1">
+                        <div class="div-1-a">
+                            <p class="div-p">Flag</p>
+                            <select class="select" name="protocol" id="protocol">
+                                <option value="">select type</option>
+                                <option value="0">OTH</option>
+                                <option value="1">REJ</option>
+                                <option value="2">RST0</option>
+                                <option value="3">RST0S0</option>
+                                <option value="4">RSTR</option>
+                                <option value="5">S0</option>
+                                <option value="6">S1</option>
+                                <option value="7">S2</option>
+                                <option value="8">S3</option>
+                                <option value="9">SF</option>
+                                <option value="10">SH</option>
+                            </select>
+
+                        </div>
+                        <div class="div-1-b">
+                            <p class="div-p">Source Byte</p>
+                            <input type="input" class="input" placeholder="Number of data bytes transferred">
+
+                        </div>
+
+                    </div>
+                    <div class="div-1">
+                        <div class="div-1-a">
+                            <p class="div-p">Destination Byte</p>
+                            <input type="input" class="input" placeholder="Number of data bytes transferred ">
+
+                        </div>
+                        <div class="div-1-b">
+                            <p class="div-p">Land</p>
+                            <input type="input" class="input" placeholder="land">
+
+                        </div> 
+
+                    </div>
+                    <div class="div-1">
+                        <div class="div-1-a">
+                            <p class="div-p">Is Host Login</p>
+                            <select class="select" name="host" id="host">
+                                <option value="">Login status</option>
+                                <option value="0">Yes</option>
+                                <option value="1">No</option>
+                                
+                            </select>
+
+                        </div>
+                        <div class="div-1-b">
+                            <p class="div-p">Is Guest Login</p>
+                            <select class="select" name="guest" id="guest">
+                                <option value="">Login status</option>
+                                <option value="0">Yes</option>
+                                <option value="1">No</option>
+                                
+                            </select>
+
+                        </div>
+
+                    </div>
+                    <div class="div-1">
+                        <div class="div-1-a">
+                            <p class="div-p">Same Dectination Count</p>
+                            <input type="number" class="input" placeholder="Number of connection to same destination">
+
+                        </div>
+                        <div class="div-1-b">
+                            <p class="div-p">Same Port Count</p>
+                            <input type="number" class="input" placeholder="Number of connection to same service">
+
+                        </div>
+                         
+                    </div>
+
+                    <div class="div-sub">
+                        <input  class="submit" type="submit">
+                    </div>
+                    </div>
+
+                </form>
+            
+
+        </div>
+
+
+
+
+
+
+
+
+
+        <script>
+            document.getElementById("normal").addEventListener("click", function() {
+                fetch('/normal')
+                    .then(response => response.json())
+                    .then(data => {
+                        const sampleData = data[0]; 
+                        document.getElementById('duration').value = sampleData.name;
+                        document.getElementById('protocol_type').value = sampleData.age;
+                        document.getElementById('flag').value = sampleData.email;
+                        document.getElementById('src_byte').value = sampleData.email;
+                        document.getElementById('destination_byte').value = sampleData.email;
+                        document.getElementById('land').value = sampleData.email;
+                        document.getElementById('is_guest_login').value = sampleData.email;
+                        document.getElementById('is_host_login').value = sampleData.email;
+                        document.getElementById('same_destn_count').value = sampleData.email;
+                        document.getElementById('same_port_count').value = sampleData.email;
+                    });
+            });
+
+            document.getElementById("dos").addEventListener("click", function() {
+                fetch('/dos')
+                    .then(response => response.json())
+                    .then(data => {
+                        const sampleData = data[0]; 
+                        document.getElementById('duration').value = sampleData.name;
+                        document.getElementById('protocol_type').value = sampleData.age;
+                        document.getElementById('flag').value = sampleData.email;
+                        document.getElementById('src_byte').value = sampleData.email;
+                        document.getElementById('destination_byte').value = sampleData.email;
+                        document.getElementById('land').value = sampleData.email;
+                        document.getElementById('is_guest_login').value = sampleData.email;
+                        document.getElementById('is_host_login').value = sampleData.email;
+                        document.getElementById('same_destn_count').value = sampleData.email;
+                        document.getElementById('same_port_count').value = sampleData.email;
+                    });
+            });
+
+            document.getElementById("r2l").addEventListener("click", function() {
+                fetch('/r2l')
+                    .then(response => response.json())
+                    .then(data => {
+                        const sampleData = data[0]; 
+                        document.getElementById('duration').value = sampleData.name;
+                        document.getElementById('protocol_type').value = sampleData.age;
+                        document.getElementById('flag').value = sampleData.email;
+                        document.getElementById('src_byte').value = sampleData.email;
+                        document.getElementById('destination_byte').value = sampleData.email;
+                        document.getElementById('land').value = sampleData.email;
+                        document.getElementById('is_guest_login').value = sampleData.email;
+                        document.getElementById('is_host_login').value = sampleData.email;
+                        document.getElementById('same_destn_count').value = sampleData.email;
+                        document.getElementById('same_port_count').value = sampleData.email;
+                    });
+            });
+
+            document.getElementById("u2r").addEventListener("click", function() {
+                fetch('/u2r')
+                    .then(response => response.json())
+                    .then(data => {
+                        const sampleData = data[0]; 
+                        document.getElementById('duration').value = sampleData.name;
+                        document.getElementById('protocol_type').value = sampleData.age;
+                        document.getElementById('flag').value = sampleData.email;
+                        document.getElementById('src_byte').value = sampleData.email;
+                        document.getElementById('destination_byte').value = sampleData.email;
+                        document.getElementById('land').value = sampleData.email;
+                        document.getElementById('is_guest_login').value = sampleData.email;
+                        document.getElementById('is_host_login').value = sampleData.email;
+                        document.getElementById('same_destn_count').value = sampleData.email;
+                        document.getElementById('same_port_count').value = sampleData.email;
+                    });
+            });
+
+            document.getElementById("probe").addEventListener("click", function() {
+                fetch('/probe')
+                    .then(response => response.json())
+                    .then(data => {
+                        const sampleData = data[0]; 
+                        document.getElementById('duration').value = sampleData.name;
+                        document.getElementById('protocol_type').value = sampleData.age;
+                        document.getElementById('flag').value = sampleData.email;
+                        document.getElementById('src_byte').value = sampleData.email;
+                        document.getElementById('destination_byte').value = sampleData.email;
+                        document.getElementById('land').value = sampleData.email;
+                        document.getElementById('is_guest_login').value = sampleData.email;
+                        document.getElementById('is_host_login').value = sampleData.email;
+                        document.getElementById('same_destn_count').value = sampleData.email;
+                        document.getElementById('same_port_count').value = sampleData.email;
+                    });
+            });
+        </script>
+
+
+
+
+    </body>
+
+
+</html>

@@ -4,6 +4,8 @@ import pickle
 import pandas as pd
 from flask import jsonify
 from xgboost import XGBClassifier
+import os
+from collections import Counter
 
 with open('model.pkl', 'rb') as f:
     model = pickle.load(f)
@@ -15,6 +17,9 @@ with open('xg.pkl', 'rb') as f:
     xg = pickle.load(f)
 
 app = Flask(__name__)
+
+app.config['UPLOAD_FOLDER'] = 'uploads'
+
 
 @app.route('/')
 def index():
@@ -48,7 +53,7 @@ def submit():
 
 
     # Do something with the prediction, for example, return it as a response
-    return render_template("barchart.html",prediction=prediction, prediction_rf=rounded_probabilities_rf[0].tolist())
+    return render_template("barchart.html",prediction=prediction, prediction_rf=rounded_probabilities_rf[0].tolist(),prediction_xg=rounded_probabilities_xg[0].tolist())
 data = [23, 45, 56, 78, 32]
 @app.route('/chart')
 def chart():
@@ -93,6 +98,45 @@ def u2r():
 @app.route('/probe')
 def probe():
     return return_sample(probedf)
+
+@app.route('/file')
+def file():
+    return render_template("file.html")
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if request.method == 'POST':
+        # Check if the post request has the file part
+        if 'file' not in request.files:
+            return 'No file part'
+        
+        file = request.files['file']
+        
+        # If the user does not select a file, the browser submits an empty file without a filename
+        if file.filename == '':
+            return 'No selected file'
+        
+        # If the file is selected
+        if file:
+            # Save the file to the upload folder
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file.save(file_path)
+            df = pd.read_csv(file_path, header=0)
+            dfsend= df.copy()
+            protocol_map = {0: 'ICMP', 1: 'TCP', 2: 'UDP'}
+            flag_map = {0: 'OTH', 1: 'REJ', 2: 'RSTO', 3: 'RSTOS0', 4: 'RSTR', 5: 'S0', 6: 'S1', 7: 'S2', 8: 'S3', 9: 'SF', 10: 'SH'}
+            dfsend['protocol_type'] = dfsend['protocol_type'].replace(protocol_map)
+            dfsend['flag'] = dfsend['flag'].replace(flag_map)
+            attack_labels = ['Normal','DoS','r2l','u2r','Probe']
+            for index,row in dfsend.iterrows():
+                print(row['ip'])
+            ip_list = df.pop('ip').tolist()
+            prediction_list = rf.predict(df.to_numpy()).tolist()
+            print(prediction_list)
+            lable_list = [attack_labels[index] for index in prediction_list]
+            return render_template('analyst.html', pre= prediction_list,df=dfsend,lable_list=lable_list,protocol_count=dfsend['protocol_type'].tolist())
+
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5002)

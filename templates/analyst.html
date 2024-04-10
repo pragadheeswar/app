@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>analyst</title>
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='analyst.css') }}">
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+
+
+
+
+    </head>
+
+
+    <body>
+
+        <div class="nav">
+            <div >
+                <p class="nav-p">Intrusion Detection System</p>
+            </div>
+  
+            <div class="nav-li">
+                <li>home</li>
+                <li>traffic</li>
+                <li>dashboard</li>
+                <li>monitor</li>
+            </div>
+  
+        </div>
+
+
+
+        <div class="main">
+            <div class="main-left">
+                <div class="left-top">
+                    <div class="details">
+                        <p class="det">NORMAL&nbsp;&nbsp;-&nbsp;&nbsp;{{pre.count(0)}}</p>
+                        <p class="det">DOS&nbsp;&nbsp;-&nbsp;&nbsp;{{pre.count(1)}}</p>
+                        <p class="det">R2L&nbsp;&nbsp;-&nbsp;&nbsp;{{pre.count(2)}}</p>
+                        <p class="det">U2R&nbsp;&nbsp;-&nbsp;&nbsp;{{pre.count(3)}}</p>
+                        <p class="det">PROBE&nbsp;&nbsp;-&nbsp;&nbsp;{{pre.count(4)}}</p>
+                    </div>
+                    <canvas id="pie-chart"></canvas> 
+
+                </div>
+                <div class="left-bottom">
+                    <canvas id="bar-chart"></canvas>
+
+                </div>
+
+            </div>
+
+
+
+
+            <div class="main-right">
+
+                    
+
+                    
+                
+                        <table>
+                            
+
+                                <tr>
+                                    <th>IP Address</th>
+                                    <th>Duration</th>
+                                    <th>Protocol type</th>
+                                    <th>Flag</th>
+                                    <th>Land</th>
+                                    <th>Attack Type</th>
+                                </tr>
+                            {% for index, row in df.iterrows() %}
+                                <tr>
+                                    <td>{{row['ip']}}</td>
+                                    <td>{{row['duration']}}</td>
+                                    <td>{{row['protocol_type']}}</td>
+                                    <td>{{row['flag']}}</td>
+                                    <td>{{row['land']}}</td>
+                                    <td>{{lable_list[index]}}</td>
+                                </tr>
+                            {% endfor %}
+
+
+                         
+                                
+                            
+                                
+
+                            
+
+                        </table>
+
+                    
+                
+                    
+                    
+               
+                
+
+            </div>
+
+
+
+        </div>
+
+
+
+        <script src="chart.min.js"></script>
+        <script>
+            new Chart(document.getElementById('bar-chart'), {
+              type: 'bar',
+              data: {
+                labels: ["ICMP", "TCP", "UDP"],
+                datasets: [{
+                    backgroundColor: ["green", "#254BDD",
+                        "#ffbe0b"],
+                    data: [{{protocol_count.count('ICMP')}}, {{protocol_count.count('TCP')}}, {{protocol_count.count('UDP')}}]
+                }]
+              },
+              options: {
+                title: {
+                  display: true,
+                  text: 'Bar Chart for admin panel'
+                },
+                responsive: true
+              }
+            });
+
+
+
+
+            new Chart(document.getElementById('pie-chart'), {
+              type: 'pie',
+              data: {
+                labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE"],
+                datasets: [{
+                    backgroundColor: ["green", "#254BDD",
+                        "#ffbe0b", "#1d3557", "#326998"],
+                    data: [{{pre.count(0)}}, {{pre.count(1)}}, {{pre.count(2)}}, {{pre.count(3)}}, {{pre.count(4)}}]
+                }]
+              },
+              options: {
+                title: {
+                  display: true,
+                  text: 'Bar Chart for admin panel'
+                },
+                responsive: true
+              }
+            });
+        </script>
+
+
+
+
+    </body>
+
+
+
+
+
+
+
+</html>

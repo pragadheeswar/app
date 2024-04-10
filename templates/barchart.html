@@ -32,10 +32,17 @@
             </div>
             
             
+            <div class="charts">
+                <div class="chart">
+                    
+                    <canvas id="bar-chart"></canvas>
+                </div>
 
-            <div>
-                
-                <canvas id="bar-chart"></canvas>
+
+                <div class="chart">
+                    
+                    <canvas id="bar-chart-2"></canvas>
+                </div>
             </div>
 
         </div>
@@ -60,29 +67,47 @@
         <script src="chart.min.js"></script>
         <script>
           var prediction_rf = {{ prediction_rf|tojson }};
+          var prediction_xg = {{ prediction_xg|tojson }};
             new Chart(document.getElementById('bar-chart'), {
               type: 'bar',
               data: {
                 labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE"],
                 datasets: [{
-                  backgroundColor: ["green", "#254BDD",
-                    "#ffbe0b", "#1d3557", "#326998"
-                  ],
-                  data: prediction_rf
-                  
-               
-
+                    backgroundColor: ["green", "#254BDD",
+                        "#ffbe0b", "#1d3557", "#326998"],
+                    data: prediction_rf
                 }]
               },
               options: {
                 title: {
                   display: true,
-                  text: 'Bar Chart for admin panel'
+                  text: 'Prediction by Random Forest'
                 },
                 responsive: true
               }
             });
-          </script>
+
+
+
+            new Chart(document.getElementById('bar-chart-2'), {
+              type: 'bar',
+              data: {
+                labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE"],
+                datasets: [{
+                    backgroundColor: ["green", "#254BDD",
+                        "#ffbe0b", "#1d3557", "#326998"],
+                    data: prediction_xg
+                }]
+              },
+              options: {
+                title: {
+                  display: true,
+                  text: 'Prediction By XGBoost'
+                },
+                responsive: true
+              }
+            });
+        </script>
 
 
 

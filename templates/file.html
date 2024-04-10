@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <title>File</title>
+
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='file.css') }}">
+
+
+
+
+
+    </head>
+    <script>
+        function displayFileName() {
+            const fileInput = document.getElementById('input-tag');
+            const fileNameDisplay = document.getElementById('filename');
+            
+            // Check if a file is selected
+            if (fileInput.files.length > 0) {
+                // Display the file name
+                fileNameDisplay.textContent = fileInput.files[0].name;
+            } else {
+                // No file selected
+                fileNameDisplay.textContent = "No file selected";
+            }
+        }
+    </script>
+
+    <body>
+
+
+        <div class="nav">
+            <div >
+                <p class="nav-p">Intrusion Detection System</p>
+            </div>
+
+            <div class="nav-li">
+                <li>home</li>
+                <li>traffic</li>
+                <li>dashboard</li>
+                <li>monitor</li>
+            </div>
+
+        </div>
+
+
+
+        <div class="container">
+
+            <div class="file-top">
+                <p>Choose the file to upload</p>
+            </div>
+
+            <div class="file">
+
+                
+
+                <label class="file-upload" id="filename" for="input-tag">Click here to Browse</label>
+
+                
+                <form action="/upload" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" id="input-tag" onchange="displayFileName()">
+                    <input type="submit" value="Upload" class="submit">
+        
+            </div>
+
+        </div>
+
+
+
+
+    </body>
+
+
+
+
+
+
+
+</html>

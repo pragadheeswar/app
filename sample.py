@@ -43,4 +43,6 @@ for i in range(len(list)):
     df = get_df(list[i],value[i])
     result = pd.concat([df, result])
 
+result = result.sample(frac=1).reset_index(drop=True)
+
 result.to_csv("sample_trafic.csv", index=False, header=True)
