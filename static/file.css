@@ -67,6 +67,7 @@ input[type="file"]{
     font-weight: bold;
     font-size: 20px;
     border-radius:4px;
+    cursor:pointer
 }
 
 

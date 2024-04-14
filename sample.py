@@ -21,7 +21,7 @@ def generate_ip():
     
     return ip_address
 
-value = [12,3,2,1,2]
+value = [20,6,3,5,2]
 
 list = [normaldf,dosdf,r2ldf,u2rdf,probedf]
 
@@ -45,4 +45,4 @@ for i in range(len(list)):
 
 result = result.sample(frac=1).reset_index(drop=True)
 
-result.to_csv("sample_trafic.csv", index=False, header=True)
+result.to_csv("sample_trafic3.csv", index=False, header=True)

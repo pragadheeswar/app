@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect,url_for
 import numpy as np
 import pickle
 import pandas as pd
@@ -16,12 +16,27 @@ with open('rf.pkl', 'rb') as f:
 with open('xg.pkl', 'rb') as f:
     xg = pickle.load(f)
 
+with open('ensemble.pkl', 'rb') as f:
+    ensemble = pickle.load(f)
+
 app = Flask(__name__)
 
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
+@app.route("/", methods=['POST','GET'])
+def login():
+  if request.method == "POST":
+    username = request.form["username"]
+    password = request.form["password"]
+    if username == "admin" and password == "admin":
+      return redirect('/index')
+    else:
+      return "Invalid username or password"
+  else:
+    return render_template("login.html")
 
-@app.route('/')
+
+@app.route('/index')
 def index():
     return render_template('form.html')
 
@@ -38,26 +53,19 @@ def submit():
     same_destn_count = int(request.form['same_destn_count'])
     same_port_count = int(request.form['same_port_count'])
 
-    # Convert form data into a NumPy array
-    form_data = np.array([[duration, protocol_type, flag, src_byter, destination_byter, land, 
-                            is_host_login, is_guest_login, same_destn_count, same_port_count]])
-    attack_labels = ['Normal','DoS','r2l','u2r','Probe']
-    # Make prediction using the loaded model
+    form_data = np.array([[duration, protocol_type, flag, destination_byter,src_byter, land, is_guest_login,
+                            is_host_login, same_destn_count, same_port_count]])
+    attack_labels = ['Normal','DoS','R2L','U2L','Probe']
+
     prediction_rf = rf.predict_proba(form_data)
     prediction_xg = xg.predict_proba(form_data)
     rounded_probabilities_rf = np.round(prediction_rf, 2)
     rounded_probabilities_xg = np.round(prediction_xg, 2)
-    prediction = attack_labels[rf.predict(form_data)[0]]
-    print(rounded_probabilities_rf)
-
-
-
-    # Do something with the prediction, for example, return it as a response
+    prediction = attack_labels[ensemble.predict(form_data)[0]]
     return render_template("barchart.html",prediction=prediction, prediction_rf=rounded_probabilities_rf[0].tolist(),prediction_xg=rounded_probabilities_xg[0].tolist())
 data = [23, 45, 56, 78, 32]
 @app.route('/chart')
 def chart():
-    # Render the HTML template with data
     return render_template('chart.html', data=data)
 
 df = pd.read_pickle('data.pkl')
@@ -72,7 +80,6 @@ probedf = df[df['labels']==4]
 def return_sample(df):
     row = df.sample(n=1)
     row.drop(columns='labels', inplace=True)
-    # Converting the selected row to JSON
     json_result = row.to_json(orient='records')
     
 
@@ -106,19 +113,15 @@ def file():
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
-        # Check if the post request has the file part
         if 'file' not in request.files:
             return 'No file part'
         
         file = request.files['file']
         
-        # If the user does not select a file, the browser submits an empty file without a filename
         if file.filename == '':
             return 'No selected file'
         
-        # If the file is selected
         if file:
-            # Save the file to the upload folder
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
             file.save(file_path)
             df = pd.read_csv(file_path, header=0)
@@ -127,7 +130,7 @@ def upload_file():
             flag_map = {0: 'OTH', 1: 'REJ', 2: 'RSTO', 3: 'RSTOS0', 4: 'RSTR', 5: 'S0', 6: 'S1', 7: 'S2', 8: 'S3', 9: 'SF', 10: 'SH'}
             dfsend['protocol_type'] = dfsend['protocol_type'].replace(protocol_map)
             dfsend['flag'] = dfsend['flag'].replace(flag_map)
-            attack_labels = ['Normal','DoS','r2l','u2r','Probe']
+            attack_labels = ['Normal','DoS','R2L','U2R','Probe']
             for index,row in dfsend.iterrows():
                 print(row['ip'])
             ip_list = df.pop('ip').tolist()
