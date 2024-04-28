@@ -7,6 +7,8 @@ from xgboost import XGBClassifier
 import os
 from collections import Counter
 
+black_list_ip =[]
+ip_reson = []
 with open('model.pkl', 'rb') as f:
     model = pickle.load(f)
 
@@ -18,6 +20,15 @@ with open('xg.pkl', 'rb') as f:
 
 with open('ensemble.pkl', 'rb') as f:
     ensemble = pickle.load(f)
+
+with open('ensemble_main.pkl', 'rb') as f:
+    ensemble_main = pickle.load(f)
+
+with open('rf_main.pkl', 'rb') as f:
+    rf_main = pickle.load(f)
+
+with open('xg_main.pkl', 'rb') as f:
+    xg_main = pickle.load(f)
 
 app = Flask(__name__)
 
@@ -110,6 +121,8 @@ def probe():
 def file():
     return render_template("file.html")
 
+ip_df = pd.DataFrame()
+
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if request.method == 'POST':
@@ -126,19 +139,62 @@ def upload_file():
             file.save(file_path)
             df = pd.read_csv(file_path, header=0)
             dfsend= df.copy()
+            global ip_df
+            ip_df = pd.concat([df, ip_df])
             protocol_map = {0: 'ICMP', 1: 'TCP', 2: 'UDP'}
             flag_map = {0: 'OTH', 1: 'REJ', 2: 'RSTO', 3: 'RSTOS0', 4: 'RSTR', 5: 'S0', 6: 'S1', 7: 'S2', 8: 'S3', 9: 'SF', 10: 'SH'}
             dfsend['protocol_type'] = dfsend['protocol_type'].replace(protocol_map)
             dfsend['flag'] = dfsend['flag'].replace(flag_map)
-            attack_labels = ['Normal','DoS','R2L','U2R','Probe']
+            attack_labels = ['Normal','DoS','R2L','U2R','Probe','Blocked']
             for index,row in dfsend.iterrows():
                 print(row['ip'])
             ip_list = df.pop('ip').tolist()
-            prediction_list = rf.predict(df.to_numpy()).tolist()
+            prediction_list = ensemble_main.predict(df.to_numpy()).tolist()
             print(prediction_list)
+            block_count = 0
+            for i in range(len(ip_list)):
+                if ip_list[i] in black_list_ip:
+                    prediction_list[i] = 5
+                    block_count = block_count + 1
             lable_list = [attack_labels[index] for index in prediction_list]
-            return render_template('analyst.html', pre= prediction_list,df=dfsend,lable_list=lable_list,protocol_count=dfsend['protocol_type'].tolist())
+            return render_template('analyst.html', pre= prediction_list,df=dfsend,lable_list=lable_list,protocol_count=dfsend['protocol_type'].tolist(),block_count=block_count)
 
+@app.route('/block/<int:digit>', methods=['POST','GET'])
+def block_ip_list(digit):
+    # global ip_df
+    row = ip_df.iloc[digit]
+    display_df = ip_df.copy()
+    row = row.drop('ip')
+    print(row)
+    attack_labels = ['Normal','DoS','R2L','U2R','Probe']
+    prediction_rf = rf_main.predict_proba(row.to_numpy().reshape(1, -1))
+    prediction_xg = xg_main.predict_proba(row.to_numpy().reshape(1, -1))
+    rounded_probabilities_rf = np.round(prediction_rf, 2)
+    rounded_probabilities_xg = np.round(prediction_xg, 2)
+    prediction = attack_labels[ensemble_main.predict(row.to_numpy().reshape(1, -1))[0]]
+    protocol_map = {0: 'ICMP', 1: 'TCP', 2: 'UDP'}
+    flag_map = {0: 'OTH', 1: 'REJ', 2: 'RSTO', 3: 'RSTOS0', 4: 'RSTR', 5: 'S0', 6: 'S1', 7: 'S2', 8: 'S3', 9: 'SF', 10: 'SH'}
+    login = {0: 'Yes', 1: 'No'}
+    display_df['protocol_type'] = display_df['protocol_type'].replace(protocol_map)
+    display_df['flag'] = display_df['flag'].replace(flag_map)
+    display_df['is_guest_login'] = display_df['is_guest_login'].replace(login)
+    display_df['is_host_login'] = display_df['is_host_login'].replace(login)
+    row_display = display_df.iloc[digit]
+    return render_template('block.html', row=row_display, prediction_rf=rounded_probabilities_rf[0].tolist(),prediction_xg=rounded_probabilities_xg[0].tolist(), prediction=prediction)
+
+@app.route('/blockip', methods=['POST'])
+def block_ip():
+    global black_list_ip
+    global ip_reson
+    ip = request.form['ip']
+    prediction = request.form['prediction']
+    black_list_ip.append(ip)
+    ip_reson.append(prediction)
+    return render_template('ipblock.html',ip=ip,prediction=prediction)
+
+@app.route('/blacklist')
+def blacklist():
+    return render_template('blacklist.html',ip= black_list_ip, reason = ip_reson, l = len(black_list_ip))
 
 
 if __name__ == '__main__':

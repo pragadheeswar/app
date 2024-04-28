@@ -3,7 +3,7 @@ import pickle
 import pandas as pd
 import random
 
-df = pd.read_pickle('data.pkl')
+df = pd.read_pickle('data_main.pkl')
 
 normaldf = df[df['labels']==0]
 dosdf = df[df['labels']==1]
@@ -21,7 +21,7 @@ def generate_ip():
     
     return ip_address
 
-value = [20,6,3,5,2]
+value = [5,2,3,4,2]
 
 list = [normaldf,dosdf,r2ldf,u2rdf,probedf]
 
@@ -45,4 +45,4 @@ for i in range(len(list)):
 
 result = result.sample(frac=1).reset_index(drop=True)
 
-result.to_csv("sample_trafic3.csv", index=False, header=True)
+result.to_csv("sample_trafic2.csv", index=False, header=True)

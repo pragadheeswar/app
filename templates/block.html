@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Block</title>
+        
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='block.css') }}">
+        <script src="{{ url_for('static', filename='chart.min.js') }}"></script>
+    </head>
+
+
+    <body>
+        <div class="nav">
+            <div >
+                <p class="nav-p">Intrusion Detection System</p>
+            </div>
+  
+            <div class="nav-li">
+                <li><a href="{{ url_for('index') }}">Home</li>
+                <li><a href="{{ url_for('index') }}">Traffic</a></li>
+              <li><a href="{{ url_for('file') }}">Analysis</a></li>
+              <li><a href="{{ url_for('blacklist') }}">BlackList</a></li>
+            </div>
+  
+        </div>
+        <div class="main">
+            <div class="main-top"> 
+                <div class="main-left">
+                    <div>
+                        <h1>The Simulated Traffic</h1>
+                    </div>
+
+                    
+
+                    <div class="main-p">
+                        <div class="main-p-a">
+                            <p style="text-align: start;">IP Address</p>
+                            <p style="text-align: start;">Duration</p>
+                            <p style="text-align: start;">Protocol used in this connection</p>
+                            <p style="text-align: start;">Flag</p>
+                            <p style="text-align: start;">Source Byte</p>
+                            <p style="text-align: start;">Destination Byte</p>
+                            <p style="text-align: start;">Land</p>
+                            <p style="text-align: start;">Is Host Login</p>
+                            <p style="text-align: start;">Is Guest Login</p>
+                            <p style="text-align: start;">Same Destintion Count</p>
+                            <p style="text-align: start;">Same Port Count</p>
+                        </div>
+                        <div class="main-p-b">
+                            <p>{{row['ip']}}</p>
+                            <p>{{row['duration']}}</p>
+                            <p>{{row['protocol_type']}}</p>
+                            <p>{{row['flag']}}</p>
+                            <p>{{row['src_bytes']}}</p>
+                            <p>{{row['dst_bytes']}}</p>
+                            <p>{{row['land']}}</p>
+                            <p>{{row['is_guest_login']}}</p>
+                            <p>{{row['is_host_login']}}</p>
+                            <p>{{row['dst_host_count']}}</p>
+                            <p>{{row['dst_host_srv_count']}}</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="main-right">
+                    <div class="bar">
+                        <h2>Randon forest</h2>
+                        <canvas id="bar-chart"></canvas>
+                        
+                    </div>
+
+                    <div class="bar">
+                        <h2>XG-Boosst</h2>
+                        <canvas id="bar-chart-2"></canvas>
+
+                    </div>
+                    
+
+                </div>
+            </div>
+            <form method="POST" action="/blockip">
+                <input type="hidden" name="ip" value="{{row['ip']}}">
+                <input type="hidden" name="prediction" value="{{prediction}}">
+                <div class="main-bottom">
+                    <button type="submit">Block</button>
+                </div>
+            </form>
+            
+        </div>
+
+
+
+
+
+
+
+
+        <script src="chart.min.js"></script>
+        <script>
+            var prediction_rf = {{ prediction_rf|tojson }};
+            var prediction_xg = {{ prediction_xg|tojson }};
+            new Chart(document.getElementById('bar-chart'), {
+              type: 'bar',
+              data: {
+                labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE"],
+                datasets: [{
+                    backgroundColor: ["green", "#254BDD",
+                        "#ffbe0b", "#1d3557", "#326998"],
+                    data: prediction_rf
+                }]
+              },
+              options: {
+                title: {
+                  display: true,
+                  text: 'Bar Chart for admin panel'
+                },
+                responsive: true
+              }
+            });
+
+
+
+            new Chart(document.getElementById('bar-chart-2'), {
+              type: 'bar',
+              data: {
+                labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE"],
+                datasets: [{
+                    backgroundColor: ["green", "#254BDD",
+                        "#ffbe0b", "#1d3557", "#326998"],
+                    data: prediction_xg
+                }]
+              },
+              options: {
+                title: {
+                  display: true,
+                  text: 'Bar Chart for admin panel'
+                },
+                responsive: true
+              }
+            });
+        </script>
+
+
+    </body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</html>

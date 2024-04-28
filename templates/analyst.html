@@ -24,7 +24,7 @@
                 <li><a href="{{ url_for('index') }}">Home</li>
                 <li><a href="{{ url_for('index') }}">Traffic</a></li>
                 <li><a href="{{ url_for('file') }}">Analysis</a></li>
-                <li><a href="{{ url_for('index') }}">Monitor</a></li>
+                <li><a href="{{ url_for('blacklist') }}">BlackList</a></li>
             </div>
   
         </div>
@@ -135,11 +135,11 @@
             new Chart(document.getElementById('pie-chart'), {
               type: 'pie',
               data: {
-                labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE"],
+                labels: ["NORMAL", "DOS", "R2L", "U2R", "PROBE", "Blocked"],
                 datasets: [{
                     backgroundColor: ["green", "#254BDD",
-                        "#ffbe0b", "#1d3557", "#326998"],
-                    data: [{{pre.count(0)}}, {{pre.count(1)}}, {{pre.count(2)}}, {{pre.count(3)}}, {{pre.count(4)}}]
+                        "#ffbe0b", "#1d3557", "#326998","red"],
+                    data: [{{pre.count(0)}}, {{pre.count(1)}}, {{pre.count(2)}}, {{pre.count(3)}}, {{pre.count(4)}}, {{block_count}}]
                 }]
               },
               options: {
